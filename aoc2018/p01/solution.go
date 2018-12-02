@@ -1,4 +1,4 @@
-package p01
+package main
 
 import (
 	"bufio"
@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-func Run() {
+func main() {
 	p1()
 	p2()
 }
