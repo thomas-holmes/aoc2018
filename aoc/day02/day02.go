@@ -55,10 +55,8 @@ func p02() {
 	var sol1, sol2 string
 
 	for j, id1 := range boxIds {
-		for k, id2 := range boxIds {
-			if j == k {
-				continue
-			}
+		for k := j; k < len(boxIds); k++ {
+			id2 := boxIds[k]
 
 			rs1 := []rune(id1)
 			rs2 := []rune(id2)
