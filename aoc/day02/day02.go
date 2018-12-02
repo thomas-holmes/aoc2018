@@ -1,14 +1,9 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
-	"io"
-	"io/ioutil"
+	"github.com/thomas-holmes/aoc2018/aoc"
+
 	"log"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 func main() {
@@ -17,7 +12,10 @@ func main() {
 }
 
 func p01() {
-	boxIds := ReadStrings("2-1.txt")
+	boxIds, err := aoc.ReadStrings("2-1.txt")
+	if err != nil {
+		log.Panicln("Failed to run p01", err)
+	}
 
 	var twos, threes int
 
@@ -46,7 +44,10 @@ func p01() {
 }
 
 func p02() {
-	boxIds := ReadStrings("2-1.txt")
+	boxIds, err := aoc.ReadStrings("2-1.txt")
+	if err != nil {
+		log.Panicln("Failed to run p02")
+	}
 
 	var closest int
 	var matching string
@@ -81,36 +82,4 @@ func p02() {
 	}
 
 	log.Println("found solution with length", closest, "and ids", sol1, sol2, "same values", matching)
-}
-
-func ReadStrings(fileName string) []string {
-	f, err := os.Open(filepath.Join("data", fileName))
-	if err != nil {
-		log.Panicln("Failed to open file", err)
-	}
-	defer f.Close()
-
-	bs, err := ioutil.ReadAll(f)
-	if err != nil {
-		log.Panicln("Failed to read file", err)
-	}
-
-	buf := bufio.NewReader(bytes.NewBuffer(bs))
-
-	var data []string
-	for {
-		lBytes, err := buf.ReadBytes('\n')
-		if err == io.EOF {
-			break
-		}
-
-		if err != nil {
-			log.Panicln("Failed to read line", err)
-		}
-
-		data = append(data, strings.TrimSpace(string(lBytes)))
-	}
-
-	return data
-
 }
