@@ -41,7 +41,6 @@ func p01() {
 		}
 
 		rec.t = ts
-		log.Println(ts)
 
 		switch string(rest[:5]) {
 		case "wakes":
@@ -70,7 +69,6 @@ func p01() {
 
 	var startSleep time.Time
 	for _, r := range records {
-		log.Println("Time", r.t, "Guard", r.id, "state", r.state)
 		switch r.state {
 		case "g":
 			guard = r.id
@@ -120,8 +118,85 @@ func p02() {
 		log.Panicln("Failed to read data", err)
 	}
 
+	var records []record
 	for _, line := range data {
-		_ = line
+
+		var rec record
+
+		letters := []rune(line)
+		timeString := string(letters[1:17])
+		rest := string(letters[19:])
+
+		ts, err := time.Parse("2006-01-02 15:04", timeString)
+		if err != nil {
+			log.Panicln("Failed to parse timestamp", err)
+		}
+
+		rec.t = ts
+
+		switch string(rest[:5]) {
+		case "wakes":
+			rec.state = "w"
+		case "falls":
+			rec.state = "f"
+		case "Guard":
+			rec.state = "g"
+			var guardId int
+			_, err := fmt.Sscanf(string(rest[6:11]), "#%d", &guardId)
+			if err != nil {
+				log.Panicln("Failed to scan", string(rest[6:11]))
+			}
+			rec.id = guardId
+		}
+
+		records = append(records, rec)
 	}
+
+	sort.Slice(records, func(i, j int) bool { return records[i].t.Before(records[j].t) })
+
+	sleeping := make(map[int]int)
+	minuteMap := make(map[int][60]int)
+	// var state string
+	var guard int
+
+	var startSleep time.Time
+	for _, r := range records {
+		switch r.state {
+		case "g":
+			guard = r.id
+		case "f":
+			startSleep = r.t
+		case "w":
+			asleep := r.t.Sub(startSleep)
+			minutes := sleeping[guard]
+			sleeping[guard] = minutes + int(asleep.Minutes())
+
+			mm := minuteMap[guard]
+			iter := startSleep
+			for {
+				if !iter.Before(r.t) {
+					break
+				}
+				mm[iter.Minute()]++
+				iter = iter.Add(1 * time.Minute)
+			}
+			minuteMap[guard] = mm
+		}
+	}
+
+	var mostSlept int
+	var sleepiestMinute int
+	var sleepiestGuard int
+	for g, mm := range minuteMap {
+		for minute, slept := range mm {
+			if slept > mostSlept {
+				mostSlept = slept
+				sleepiestMinute = minute
+				sleepiestGuard = g
+			}
+		}
+	}
+
+	log.Println("Guard", sleepiestGuard, "slept for", mostSlept, "minutes", " on sleepiest minute", sleepiestMinute)
 
 }
