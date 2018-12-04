@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -59,6 +60,7 @@ func p1() {
 }
 
 func p2() {
+	t1 := time.Now()
 	f, err := os.Open(filepath.Join("data", "1-2.txt"))
 	if err != nil {
 		log.Panicln("Failed to open file", err)
@@ -93,14 +95,15 @@ func p2() {
 
 	result := scan(0, numbers, make(map[int]struct{}))
 
-	log.Println("P2: Computed total freq of", result)
+	log.Println(time.Since(t1))
+
+	log.Println("P2: Found duplicate frequency", result)
 }
 
 func scan(acc int, numbers []int, seen map[int]struct{}) int {
 	for _, i := range numbers {
 		acc += i
 		if _, ok := seen[acc]; ok {
-			log.Println("Found duplicate frequency", acc)
 			return acc
 		}
 		seen[acc] = struct{}{}
