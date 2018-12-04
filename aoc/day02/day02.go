@@ -12,7 +12,7 @@ func main() {
 }
 
 func p01() {
-	boxIds, err := aoc.ReadStrings("2-1.txt")
+	boxIds, err := aoc.ReadStrings("2.txt")
 	if err != nil {
 		log.Panicln("Failed to run p01", err)
 	}
@@ -44,7 +44,7 @@ func p01() {
 }
 
 func p02() {
-	boxIds, err := aoc.ReadStrings("2-1.txt")
+	boxIds, err := aoc.ReadStrings("2.txt")
 	if err != nil {
 		log.Panicln("Failed to run p02")
 	}

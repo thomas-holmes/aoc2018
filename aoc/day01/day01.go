@@ -19,7 +19,7 @@ func main() {
 }
 
 func p1() {
-	f, err := os.Open(filepath.Join("data", "1-2.txt"))
+	f, err := os.Open(filepath.Join("data", "1.txt"))
 	if err != nil {
 		log.Panicln("Failed to open file", err)
 	}
@@ -61,7 +61,7 @@ func p1() {
 
 func p2() {
 	t1 := time.Now()
-	f, err := os.Open(filepath.Join("data", "1-2.txt"))
+	f, err := os.Open(filepath.Join("data", "1.txt"))
 	if err != nil {
 		log.Panicln("Failed to open file", err)
 	}
