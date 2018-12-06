@@ -110,24 +110,8 @@ func p01stack() {
 	}
 
 	line := lines[0]
-	s := newStack(len(line))
 
-	for _, r := range line {
-		f, ok := s.peek()
-		if !ok {
-			s.push(r)
-			continue
-		}
-
-		if pair(r, f) {
-			_ = s.pop() // throw it away
-			continue
-		}
-
-		s.push(r)
-	}
-
-	log.Println("p01stack:", s.len())
+	log.Println("p01stack:", stackCollapse(line))
 
 }
 
