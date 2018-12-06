@@ -9,6 +9,7 @@ import (
 
 func main() {
 	p01()
+	p02()
 }
 
 type point struct {
@@ -171,4 +172,64 @@ func compareAndSet(grid map[point]mark, p, t point) {
 	} else {
 		// greater than, do nothing
 	}
+}
+
+func p02() {
+	lines, err := aoc.ReadStrings("6.txt")
+	if err != nil {
+		log.Panicln("Failed to read points", err)
+	}
+
+	var points []point
+
+	for _, l := range lines {
+		var p point
+		fmt.Sscanf(l, "%d, %d", &p.x, &p.y)
+		points = append(points, p)
+	}
+
+	minX, minY, maxX, maxY := 0xFFFFFFFF, 0xFFFFFFFF, 0, 0
+
+	for _, p := range points {
+		if p.x < minX {
+			minX = p.x
+		}
+		if p.y < minY {
+			minY = p.y
+		}
+		if p.x > maxX {
+			maxX = p.x
+		}
+		if p.y > maxY {
+			maxY = p.y
+		}
+	}
+
+	// I think there are cases that break this. Probably need to make sure i check a
+	// box that would contain the triangle point off of each side.
+
+	// Adjust?
+	// minX, minY, maxX, maxY = minX, minY, maxX, maxY
+	log.Printf("Min (%d,%d) Max (%d,%d)", minX, minY, maxX, maxY)
+
+	grid := make(map[point]int)
+	for _, p := range points {
+		for x := minX; x <= maxX; x++ {
+			for y := minY; y <= maxY; y++ {
+				t := point{x, y}
+
+				grid[t] += dist(p, t)
+			}
+		}
+	}
+
+	var safeRegion int
+
+	for _, v := range grid {
+		if v < 10000 {
+			safeRegion++
+		}
+	}
+
+	log.Println("Safe region:", safeRegion)
 }
