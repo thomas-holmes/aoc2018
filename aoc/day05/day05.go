@@ -2,12 +2,14 @@ package main
 
 import (
 	"log"
+	"strings"
 
 	"github.com/thomas-holmes/aoc2018/aoc"
 )
 
 func main() {
 	p01()
+	p02()
 }
 
 const offset = 'a' - 'A'
@@ -22,12 +24,38 @@ func p01() {
 		log.Panicln("Failed to read text", err)
 	}
 
+	log.Println(len(collapse(lines[0])))
+}
+
+func p02() {
+	lines, err := aoc.ReadStrings("5.txt")
+	if err != nil {
+		log.Panicln("Failed to read text", err)
+	}
+
 	polymerChain := []rune(lines[0])
 
+	shortest := len(polymerChain)
+
+	polymer := lines[0]
+	for c := rune('A'); c < rune('A')+26; c++ {
+		candidate := strings.Replace(polymer, string([]rune{c}), "", -1)
+		candidate = strings.Replace(candidate, string([]rune{c + offset}), "", -1)
+		length := len(collapse(candidate))
+		if length < shortest {
+			shortest = length
+		}
+	}
+
+	log.Println(shortest)
+}
+
+func collapse(polymer string) string {
 	var adjusted bool
 	var last rune
 	var i int
 
+	polymerChain := []rune(polymer)
 	for {
 		if len(polymerChain) < 2 {
 			break
@@ -58,5 +86,5 @@ func p01() {
 		}
 	}
 
-	log.Println(len(polymerChain))
+	return string(polymerChain)
 }
