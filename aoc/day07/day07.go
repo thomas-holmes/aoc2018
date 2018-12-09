@@ -145,11 +145,10 @@ func p02() {
 	var working []*step
 	var curr int
 
-	var stop int
 	for {
 		var lowest *step
 
-		log.Println("len(graph)", len(graph), "len(working)", len(working))
+		// log.Println("len(graph)", len(graph), "len(working)", len(working))
 		for _, v := range graph {
 			if len(v.depends) != 0 {
 				continue
@@ -165,7 +164,7 @@ func p02() {
 		}
 
 		if currentWorkers == MaxWorkers || lowest == nil {
-			log.Printf("currentWorkers=%d MaxWorkers=%d, lowest=%v", currentWorkers, MaxWorkers, lowest)
+			// log.Printf("currentWorkers=%d MaxWorkers=%d, lowest=%v", currentWorkers, MaxWorkers, lowest)
 			// do some work
 			// Doesn't control output order if two tasks end at the same time, but
 			// the problem doesn't actually care about that, just the duration of time
@@ -177,22 +176,17 @@ func p02() {
 			curr = targetTime
 			var completed []*step
 
-			log.Printf("Advancing to %d. First up is %s", targetTime, working[0].name)
+			// log.Printf("Advancing to %d. First up is %s", targetTime, working[0].name)
 
 			var removalIndex int
 			for removalIndex = 0; removalIndex < len(working); removalIndex++ {
 				s := working[removalIndex]
 				if s.done > targetTime {
-					// log.Println("working: ", len(working), "before")
 					break
 				}
 
-				stop++
-				if stop > 10 {
-					// return
-				}
 				order += s.name
-				log.Println("***Completing [", s.name, "] at T:", curr)
+				// log.Println("***Completing [", s.name, "] at T:", curr)
 				completed = append(completed, s)
 			}
 
@@ -209,7 +203,7 @@ func p02() {
 			continue
 		}
 
-		log.Printf("Adding %s to the work queue, T:%d", lowest.name, curr)
+		// log.Printf("Adding %s to the work queue, T:%d", lowest.name, curr)
 		doneTime(lowest, curr)
 		working = append(working, lowest)
 		delete(graph, lowest.name)
