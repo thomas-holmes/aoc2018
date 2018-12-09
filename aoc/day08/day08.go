@@ -14,6 +14,9 @@ func main() {
 	t0 := time.Now()
 	p01()
 	log.Println("P01:", time.Since(t0))
+	t1 := time.Now()
+	p02()
+	log.Println("P02:", time.Since(t1))
 }
 
 func p01() {
@@ -64,48 +67,70 @@ func p01() {
 	log.Printf("P01: Consumed %d, Total %d", consumed, sum)
 }
 
-// new stack stuff
-type stack struct {
-	stack []int
-	ptr   int
-}
-
-func (s *stack) push(r int) {
-	s.ptr++
-	if s.ptr > len(s.stack) {
-		log.Panicln("push failure", s.ptr, ">", len(s.stack))
+func p02() {
+	lines, err := aoc.ReadStrings("8.txt")
+	if err != nil {
+		log.Panicln("Failed to read data", err)
 	}
 
-	s.stack[s.ptr] = r
-}
+	data := strings.NewReader(lines[0])
+	var numbers []int
+	for {
+		var d int
+		_, err := fmt.Fscanf(data, "%d", &d)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Panicln("Failed to scan file")
+		}
 
-func (s *stack) pop() int {
-	if s.ptr < 0 {
-		log.Panicln("pop off empty stack")
-	}
-	var erase int
-	r := s.stack[s.ptr]
-	s.stack[s.ptr] = erase
-	s.ptr--
-
-	return r
-}
-
-func (s *stack) peek() (int, bool) {
-	if s.ptr < 0 {
-		return 0, false
+		numbers = append(numbers, d)
 	}
 
-	return s.stack[s.ptr], true
-}
+	var md []int
+	var sum int
+	var sumMD func(start int) (int, int)
+	// Forgive me, this is horrific, but it works.
+	// Returns (consumed, nodeValue int)
+	sumMD = func(start int) (int, int) {
+		consumed := 0
+		numChildren := numbers[start]
+		numMetadata := numbers[start+1]
+		consumed += 2
 
-func (s *stack) len() int {
-	return s.ptr + 1
-}
+		var childValues []int
+		for i := 0; i < numChildren; i++ {
+			c, value := sumMD(start + consumed)
+			consumed += c
+			childValues = append(childValues, value)
+		}
 
-func newStack(l int) *stack {
-	return &stack{
-		stack: make([]int, l, l),
-		ptr:   -1,
+		var mdSum int
+		var mdEntries []int
+		for i := 0; i < numMetadata; i++ {
+			mdNum := numbers[start+consumed]
+			md = append(md, mdNum)
+			mdEntries = append(mdEntries, mdNum)
+			sum += mdNum
+			mdSum += mdNum
+			consumed++
+		}
+
+		if numChildren == 0 {
+			return consumed, mdSum
+		}
+		var nodeTotal int
+		for _, ni := range mdEntries {
+			if ni > 0 && ni <= numChildren {
+				// log.Printf("NumChildren=%d len(childValues)=%d Looking for nodeIndex %d in childValues: %v", numChildren, len(childValues), ni-1, childValues)
+				nodeTotal += childValues[ni-1]
+			}
+		}
+		return consumed, nodeTotal
 	}
+
+	consumed, total := sumMD(0)
+
+	log.Printf("P02: Consumed %d, Total %d", consumed, total)
 }
