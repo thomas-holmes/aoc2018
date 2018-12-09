@@ -4,13 +4,18 @@ import (
 	"fmt"
 	"log"
 	"sort"
+	"time"
 
 	"github.com/thomas-holmes/aoc2018/aoc"
 )
 
 func main() {
-	// p01()
+	t0 := time.Now()
+	p01()
+	log.Println("p01:", time.Since(t0))
+	t1 := time.Now()
 	p02()
+	log.Println("p02:", time.Since(t1))
 }
 
 func p01() {
@@ -162,6 +167,10 @@ func p02() {
 		if currentWorkers == MaxWorkers || lowest == nil {
 			log.Printf("currentWorkers=%d MaxWorkers=%d, lowest=%v", currentWorkers, MaxWorkers, lowest)
 			// do some work
+			// Doesn't control output order if two tasks end at the same time, but
+			// the problem doesn't actually care about that, just the duration of time
+			// and completion order doesn't matter for that, just enqueueing order, which
+			// I do handle.
 			sort.Slice(working, func(i, j int) bool { return working[i].done < working[j].done })
 
 			targetTime := working[0].done
