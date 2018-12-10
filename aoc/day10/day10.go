@@ -88,8 +88,6 @@ func printSpace(space map[point][]particle) {
 		}
 	}
 
-	log.Printf("Computed a region (%d,%d) to (%d,%d)", minX, minY, maxX, maxY)
-
 	for y := minY; y <= maxY; y++ {
 		var row string
 		for x := minX; x <= maxX; x++ {
@@ -101,6 +99,7 @@ func printSpace(space map[point][]particle) {
 				row += "."
 			}
 		}
+		log.Println(row)
 	}
 
 }
