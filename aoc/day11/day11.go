@@ -31,7 +31,6 @@ func p01() {
 	for x := 0; x <= 298; x++ {
 		for y := 0; y <= 298; y++ {
 			var total int
-			// log.Printf("Checking (%d,%d)", x, y)
 			for dx := 0; dx < 3; dx++ {
 				for dy := 0; dy < 3; dy++ {
 					total += power(x+dx+1, y+dy+1, Input)
@@ -42,7 +41,6 @@ func p01() {
 				bestSquare = total
 				bestX = x + 1
 				bestY = y + 1
-				// log.Printf("Found new best of %d at (%d,%d)", bestSquare, bestX, bestY)
 			}
 		}
 	}
@@ -51,21 +49,16 @@ func p01() {
 }
 
 func power(x, y, serial int) int {
-	// log.Printf("Calculating %d, %d serial %d", x, y, serial)
 	s1 := x + 10
 	s2 := s1 * y
 	s3 := s2 + serial
 	s4 := s3 * s1
 	s5 := (s4 / 100) % 10
 	s6 := s5 - 5
-
-	// log.Printf("s1[%d] s2[%d] s3[%d] s4[%d] s5[%d] s6[%d]", s1, s2, s3, s4, s5, s6)
 	return s6
 }
 
 func p02() {
-	// MaxX, MaxY := 300, 300
-	// Input := 18
 	MaxX, MaxY := 300, 300
 	Input := 5177
 	grid := make([]int, MaxX*MaxY)
@@ -81,15 +74,26 @@ func p02() {
 
 	for x := 0; x < MaxX; x++ {
 		for y := 0; y < MaxY; y++ {
+			var total int
 			for size := 1; size+x <= MaxX && size+y <= MaxY; size++ {
 				if x%10 == 0 && y == 0 && size == 1 {
-					log.Printf("Checking (%d,%d) %d", x, y, size)
+					// log.Printf("Checking (%d,%d) %d", x, y, size)
 				}
-				var total int
-				for dx := 0; dx < size; dx++ {
-					for dy := 0; dy < size; dy++ {
-						total += power(x+dx+1, y+dy+1, Input)
-					}
+				// bottom row
+				botY := y + size - 1
+				for dx := 0; dx < size-1; dx++ {
+					total += power(x+dx+1, botY+1, Input)
+				}
+
+				// right column
+				rightX := x + size - 1
+				for dy := 0; dy < size-1; dy++ {
+					total += power(rightX+1, y+dy+1, Input)
+				}
+
+				// bottom right point
+				if size > 1 {
+					total += power(x+size, y+size, Input)
 				}
 
 				if total > bestSquare {
@@ -97,7 +101,6 @@ func p02() {
 					bestX = x + 1
 					bestY = y + 1
 					bestSize = size
-					log.Printf("Found new best of %d at (%d,%d) %d power %d", bestSquare, bestX, bestY, bestSize, bestSquare)
 				}
 			}
 		}
