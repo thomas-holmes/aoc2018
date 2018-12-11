@@ -69,16 +69,12 @@ func p02() {
 		}
 	}
 
-	var bestSquare int
-	var bestX, bestY, bestSize int
+	var bestX, bestY, bestSquare, bestSize int
 
 	for x := 0; x < MaxX; x++ {
 		for y := 0; y < MaxY; y++ {
 			var total int
 			for size := 1; size+x <= MaxX && size+y <= MaxY; size++ {
-				if x%10 == 0 && y == 0 && size == 1 {
-					// log.Printf("Checking (%d,%d) %d", x, y, size)
-				}
 				// bottom row
 				botY := y + size - 1
 				for dx := 0; dx < size-1; dx++ {
