@@ -9,7 +9,7 @@ import (
 
 func main() {
 	t0 := time.Now()
-	p01()
+	//p01()
 	log.Println("P01:", time.Since(t0))
 	t1 := time.Now()
 	p02()
@@ -153,20 +153,15 @@ func p02() {
 		gen[i+5] = r == '#'
 	}
 
-	const MaxGens = 20000
+	const MaxGens = 50000000000
 
 	firstPot := -5
 
 	printGen(gen)
 	for g := 0; g < MaxGens; g++ {
 		nextGen := make([]bool, len(gen))
-
-		if g%500 == 0 {
-			/*
-				log.Println("Gen", g)
-				log.Println(firstPot)
-				printGen(gen)
-			*/
+		if g%1000000 == 0 {
+			log.Println(g)
 		}
 
 		for i := 2; i < len(gen)-2; i++ {
@@ -180,22 +175,46 @@ func p02() {
 		}
 
 		{
-			/*
-				var growFront, growBack, shrinkFront, shrinkBack bool
-				var frontAmout, backAmount int
-			*/
-			for i := 0; i < 3; i++ {
+			var firstPlant, lastPlant int
 
-				if nextGen[i] || nextGen[len(gen)-(i+1)] {
-					nextGen = append([]bool{false, false, false}, nextGen...)
-					nextGen = append(nextGen, false, false, false)
-					firstPot -= 3
+			for i := 0; i < len(nextGen); i++ {
+				if nextGen[i] {
+					firstPlant = i
 					break
+				}
+			}
+
+			for i := len(nextGen) - 1; i > 0; i-- {
+				if nextGen[i] {
+					lastPlant = i
+					break
+				}
+			}
+
+			// I'm going to cheat and hardcode the case I know exists, this grows forever to the right
+			// log.Printf("len(nextGen)=%d lastPlant=%d sub=%d", len(nextGen), lastPlant, len(nextGen)-lastPlant)
+			if len(nextGen)-lastPlant < 4 {
+				needs := 4 - (len(nextGen) - lastPlant)
+
+				// log.Printf("first %d, last %d, needs %d", firstPlant, lastPlant, needs)
+				if firstPlant-2 > needs {
+					firstPot += needs
+					for i := 0; i < len(nextGen)-needs; i++ {
+						nextGen[i] = nextGen[i+needs]
+						nextGen[i+needs] = false
+					}
+				} else {
+					nextGen = append([]bool{false, false, false, false}, nextGen...)
+					nextGen = append(nextGen, false, false, false, false)
+					firstPot -= 4
 				}
 			}
 		}
 
+		// printGen(nextGen)
+
 		gen = nextGen
+
 	}
 
 	var total int
